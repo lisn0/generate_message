@@ -47,7 +47,7 @@ def format_path(path=None):
         return formatted_path
 
 
-def create_graph(cells=range(560), diag_weight=.9, vertical_weight=1):
+def create_graph(cells, diag_weight=.9, vertical_weight=1):
     g = nx.Graph()
     g.add_node(cells)
     for j in cells:
@@ -60,15 +60,17 @@ def create_graph(cells=range(560), diag_weight=.9, vertical_weight=1):
                 pair1 = [j+1, j+28]
                 pair2 = [j+14]
             elif (j + 1) % 14 == 0:
-                pair1 = [j+1, j+28]
+                pair1 = [j+28]
                 pair2 = [j+13]
             g.add_edges_from([(j, i) for i in pair1 if (560 > i >= 0)], weight=vertical_weight)
             g.add_edges_from([(j, i) for i in pair2 if (560 > i >= 0)], weight=diag_weight)
         else:
             if j % 14 == 0:
-                impair1 = [j + 1, j + 28, j + 15]
+                impair1 = [j + 1, j + 28]
+                impair2 = [j + 15]
             if (j + 1) % 14 == 0:
-                impair1 = [j + 1, j + 28, j + 14]
+                impair1 = [j + 28]
+                impair2 = [j + 14]
             g.add_edges_from([(j, i) for i in impair1 if (560 > i >= 0)], weight=vertical_weight)
             g.add_edges_from([(j, i) for i in impair2 if (560 > i >= 0)], weight=diag_weight)
     return g
@@ -79,5 +81,5 @@ def shortest_path(graph, source, target):
 
 
 if __name__ == '__main__':
-    g = create_graph()
-    print(shortest_path(g, 419, 166))
+    g = create_graph(cells=range(560))  #add walkable cells
+    print(shortest_path(g, source=419, target=166))
