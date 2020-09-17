@@ -24,7 +24,7 @@ impair_direction = {
 
 
 def create_single_path(cell1, cell2, final=0):
-    if not (cell1//14) % 2:
+    if not (cell1 // 14) % 2:
         direction = pair_direction
     else:
         direction = impair_direction
@@ -34,11 +34,12 @@ def create_single_path(cell1, cell2, final=0):
 
 
 def format_path(path=None):
-    if not path: return path
+    if not path:
+        return path
     else:
         formatted_path = []
         oldoff = 500
-        for i in range(len(path)-1):
+        for i in range(len(path) - 1):
             paths, off = create_single_path(path[i], path[i + 1])
             if off != oldoff:
                 formatted_path.append(paths)
@@ -51,17 +52,17 @@ def create_graph(cells, diag_weight=.9, vertical_weight=1):
     g = nx.Graph()
     g.add_node(cells)
     for j in cells:
-        pair1 = [j+1, j+28]
-        pair2 = [j+14, j+13]
-        impair1 = [j+1, j+28]
-        impair2 = [j+15, j+14]
+        pair1 = [j + 1, j + 28]
+        pair2 = [j + 14, j + 13]
+        impair1 = [j + 1, j + 28]
+        impair2 = [j + 15, j + 14]
         if not (j // 14) % 2:
             if j % 14 == 0:
-                pair1 = [j+1, j+28]
-                pair2 = [j+14]
+                pair1 = [j + 1, j + 28]
+                pair2 = [j + 14]
             elif (j + 1) % 14 == 0:
-                pair1 = [j+28]
-                pair2 = [j+13]
+                pair1 = [j + 28]
+                pair2 = [j + 13]
             g.add_edges_from([(j, i) for i in pair1 if (560 > i >= 0)], weight=vertical_weight)
             g.add_edges_from([(j, i) for i in pair2 if (560 > i >= 0)], weight=diag_weight)
         else:
@@ -80,6 +81,22 @@ def shortest_path(graph, source, target):
     return format_path(nx.algorithms.shortest_paths.weighted.dijkstra_path(graph, source, target))
 
 
+def format_message(message, map_id, path=None):
+    if path is None:
+        path = []
+    messages = {
+        'GameMapMovementRequestMessage': {
+            "keyMovements": path,
+            "mapId": map_id
+        }
+    }
+    return message, messages[message]
+
+
 if __name__ == '__main__':
-    g = create_graph(cells=range(560))  #add walkable cells
-    print(shortest_path(g, source=419, target=166))
+    g = create_graph(cells=range(560))  # add walkable cells
+    print(format_message(message="GameMapMovementRequestMessage", map_id=22222,
+                         path=shortest_path(g, source=73, target=102)))
+
+    # this is how you move, first index in key movement is your pos
+    # temp1.wGame.dofus.sendMessage("GameMapMovementRequestMessage", {keyMovements: [73, 74], mapId: 80216579})
