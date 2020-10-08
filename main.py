@@ -100,3 +100,6 @@ if __name__ == '__main__':
 
     # this is how you move, first index in key movement is your pos
     # temp1.wGame.dofus.sendMessage("GameMapMovementRequestMessage", {keyMovements: [73, 74], mapId: 80216579})
+
+    # must be in neighbor cell to use. must be used after the client send "GameMapMovementConfirmMessage"
+    # temp1.wGame.dofus.sendMessage("InteractiveUseRequestMessage", {elemId: 478459, skillInstanceUid: 61091854})
